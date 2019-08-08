@@ -5,6 +5,7 @@ import de.ellpeck.rockbottom.api.IRenderer;
 import de.ellpeck.rockbottom.api.assets.IAssetManager;
 import de.ellpeck.rockbottom.api.toast.IToaster;
 import de.ellpeck.rockbottom.api.toast.Toast;
+import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -16,6 +17,9 @@ public class Toaster implements IToaster {
     private final Map<Toast, ToastPosition> toasts = new LinkedHashMap<>();
 
     public void update() {
+        if (CutsceneManager.getInstance().isPlaying()) {
+            return;
+        }
         Iterator<ToastPosition> iterator = this.toasts.values().iterator();
         while (iterator.hasNext()) {
             ToastPosition pos = iterator.next();
@@ -28,6 +32,9 @@ public class Toaster implements IToaster {
     }
 
     public void render(IGameInstance game, IAssetManager manager, IRenderer g) {
+        if (CutsceneManager.getInstance().isPlaying()) {
+            return;
+        }
         for (Entry<Toast, ToastPosition> entry : this.toasts.entrySet()) {
             Toast toast = entry.getKey();
             ToastPosition pos = entry.getValue();

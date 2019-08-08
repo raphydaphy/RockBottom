@@ -26,9 +26,12 @@ public class CutsceneCamera {
         lastTickY = y;
         lastTickScale = scale;
 
-        x += 0.01;
-        y += 0.001;
-        scale -= 0.01f;
+        x += 0.3;
+        y += 0.01;
+        scale -= 0.25f;
+        if (scale < 0) {
+            scale = 0;
+        }
 
         if (scale != lastTickScale) {
             RockBottomAPI.getGame().getRenderer().recalculateWorldScale();
@@ -44,6 +47,6 @@ public class CutsceneCamera {
     }
 
     public float getLerpedScale() {
-        return (float) Util.lerp(this.lastTickScale, this.scale, RockBottomAPI.getGame().getTickDelta());
+        return (float) Util.lerp(this.lastTickScale / 100f, this.scale / 100f, RockBottomAPI.getGame().getTickDelta());
     }
 }

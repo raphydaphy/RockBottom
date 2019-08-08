@@ -17,6 +17,7 @@ public class CutsceneManager {
             return;
         } else if (cutscene.finished()) {
             cutscene = null;
+            RockBottomAPI.getGame().getRenderer().recalculateWorldScale();
             return;
         }
         cutscene.update();
@@ -32,7 +33,6 @@ public class CutsceneManager {
             RockBottomAPI.logger().warning("Tried to start a cutscene when one was already playing");
             return false;
         }
-        RockBottomAPI.logger().info("Started Cutscene!");
         this.cutscene = cutscene;
         return true;
     }
@@ -42,6 +42,6 @@ public class CutsceneManager {
     }
 
     public boolean isPlaying() {
-        return RockBottomAPI.getGame() != null && RockBottomAPI.getGame().getPlayer() != null && cutscene != null && !cutscene.finished();
+        return RockBottomAPI.getGame() != null && RockBottomAPI.getGame().getPlayer() != null && cutscene != null;
     }
 }

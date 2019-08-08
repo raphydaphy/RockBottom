@@ -388,6 +388,12 @@ public class RockBottom extends AbstractGame {
             }
         }
 
+        if (!RockBottomAPI.getNet().isServer()) {
+            if (CutsceneManager.getInstance().isPlaying()) {
+                CutsceneManager.getInstance().update();
+            }
+        }
+
         this.guiManager.update(this);
         this.toaster.update();
     }

@@ -640,6 +640,8 @@ public class Renderer implements IRenderer {
         float renderScale = this.game.getSettings().renderScale;
         if (CutsceneManager.getInstance().isPlaying()) {
             renderScale = CutsceneManager.getInstance().getActiveCutscene().getCamera().getLerpedScale();
+        } else {
+            System.out.println("Updating render scale without cutscene! ");
         }
 
         this.worldScale = this.getDisplayRatio() * renderScale;

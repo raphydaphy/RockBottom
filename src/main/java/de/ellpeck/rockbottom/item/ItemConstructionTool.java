@@ -1,9 +1,20 @@
 package de.ellpeck.rockbottom.item;
 
+import de.ellpeck.rockbottom.api.GameContent;
+import de.ellpeck.rockbottom.api.RockBottomAPI;
 import de.ellpeck.rockbottom.api.assets.IAssetManager;
+import de.ellpeck.rockbottom.api.entity.player.AbstractEntityPlayer;
+import de.ellpeck.rockbottom.api.gui.GuiMessageBox;
 import de.ellpeck.rockbottom.api.item.ItemBasic;
 import de.ellpeck.rockbottom.api.item.ItemInstance;
+import de.ellpeck.rockbottom.api.net.chat.component.ChatComponentTranslation;
 import de.ellpeck.rockbottom.api.util.reg.ResourceName;
+import de.ellpeck.rockbottom.api.world.IWorld;
+import de.ellpeck.rockbottom.api.world.layer.TileLayer;
+import de.ellpeck.rockbottom.construction.ConstructionRegistry;
+import de.ellpeck.rockbottom.render.cutscene.Cutscene;
+import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
+import de.ellpeck.rockbottom.world.entity.EntityItem;
 
 import java.util.List;
 
@@ -32,5 +43,18 @@ public class ItemConstructionTool extends ItemBasic {
     @Override
     public int getHighestPossibleMeta() {
         return this.durability - 1;
+    }
+
+    @Override
+    public boolean onInteractWith(IWorld world, int x, int y, TileLayer layer, double mouseX, double mouseY, AbstractEntityPlayer player, ItemInstance instance) {
+        if (this == GameContent.ITEM_HAMMER) {
+            if (!world.isServer()) {
+                // TODO: remove this
+                RockBottomAPI.logger().info("Started Debug Cutscene");
+                CutsceneManager.getInstance().startCutscene(new Cutscene(300));
+            }
+            return true;
+        }
+        return false;
     }
 }

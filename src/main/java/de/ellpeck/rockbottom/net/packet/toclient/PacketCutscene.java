@@ -19,7 +19,6 @@ public class PacketCutscene implements IPacket {
     private int duration;
 
     public PacketCutscene(int duration) {
-        System.out.println("construc");
         this.duration = duration;
     }
 
@@ -28,19 +27,16 @@ public class PacketCutscene implements IPacket {
 
     @Override
     public void toBuffer(ByteBuf buf) {
-        System.out.println("to buf");
         buf.writeInt(this.duration);
     }
 
     @Override
     public void fromBuffer(ByteBuf buf) {
-        System.out.println("from buf");
         this.duration = buf.readInt();
     }
 
     @Override
     public void handle(IGameInstance game, ChannelHandlerContext context) {
-        System.out.println("hello");
         CutsceneManager.getInstance().startCutscene(new Cutscene(duration));
     }
 }
