@@ -26,6 +26,7 @@ import de.ellpeck.rockbottom.api.world.IChunk;
 import de.ellpeck.rockbottom.api.world.IWorld;
 import de.ellpeck.rockbottom.api.world.layer.TileLayer;
 import de.ellpeck.rockbottom.particle.ParticleManager;
+import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 import de.ellpeck.rockbottom.world.AbstractWorld;
 import de.ellpeck.rockbottom.world.entity.player.EntityPlayer;
 import de.ellpeck.rockbottom.world.entity.player.InteractionManager;
@@ -350,6 +351,10 @@ public class WorldRenderer {
 
         int time = world.getCurrentTime();
         float worldScale = game.getSettings().renderScale;
+
+        if (CutsceneManager.getInstance().isPlaying()) {
+            worldScale = CutsceneManager.getInstance().getActiveCutscene().getCamera().getLerpedScale();
+        }
 
         float starAlpha = 1F - Math.min(1F, skylightMod + 0.5F);
         if (starAlpha <= 0F) {

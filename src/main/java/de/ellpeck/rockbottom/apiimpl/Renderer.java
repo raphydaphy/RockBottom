@@ -30,6 +30,7 @@ import de.ellpeck.rockbottom.assets.font.SimpleFont;
 import de.ellpeck.rockbottom.assets.shader.ShaderProgram;
 import de.ellpeck.rockbottom.assets.stub.SimpleShaderProgram;
 import de.ellpeck.rockbottom.assets.tex.Texture;
+import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 import de.ellpeck.rockbottom.render.engine.VertexArrayObject;
 import de.ellpeck.rockbottom.render.engine.VertexBufferObject;
 import org.lwjgl.opengl.GL11;
@@ -626,11 +627,24 @@ public class Renderer implements IRenderer {
         this.guiWidth = width / this.guiScale;
         this.guiHeight = height / this.guiScale;
 
-        this.worldScale = this.getDisplayRatio() * this.game.getSettings().renderScale;
-        this.worldWidth = width / this.worldScale;
-        this.worldHeight = height / this.worldScale;
+        recalculateWorldScale();
 
         RockBottomAPI.logger().config("Successfully calculated render scales");
+    }
+
+    @Override
+    public void recalculateWorldScale() {
+        float width = game.getWidth();
+        float height = game.getHeight();
+
+        float renderScale = this.game.getSettings().renderScale;
+        if (CutsceneManager.getInstance().isPlaying()) {
+            renderScale = CutsceneManager.getInstance().getActiveCutscene().getCamera().getLerpedScale();
+        }
+
+        this.worldScale = this.getDisplayRatio() * renderScale;
+        this.worldWidth = width / this.worldScale;
+        this.worldHeight = height / this.worldScale;
     }
 
     @Override
