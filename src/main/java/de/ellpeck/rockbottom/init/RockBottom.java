@@ -565,6 +565,7 @@ public class RockBottom extends AbstractGame {
 
         this.guiManager.render(this, this.assetManager, this.renderer, this.player);
         this.toaster.render(this, this.assetManager, this.renderer);
+        CutsceneManager.getInstance().render();
 
         this.renderer.setScale(1F, 1F);
 

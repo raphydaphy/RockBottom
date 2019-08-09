@@ -6,6 +6,7 @@ import de.ellpeck.rockbottom.api.assets.font.FormattingCode;
 import de.ellpeck.rockbottom.api.entity.player.AbstractEntityPlayer;
 import de.ellpeck.rockbottom.api.net.chat.component.ChatComponentText;
 import de.ellpeck.rockbottom.api.render.Camera;
+import de.ellpeck.rockbottom.init.RockBottom;
 
 public class CutsceneManager {
     private static CutsceneManager INSTANCE = new CutsceneManager();
@@ -31,6 +32,12 @@ public class CutsceneManager {
             return;
         }
         cutscene.update();
+    }
+
+    public void render() {
+        if (isPlaying()) {
+            cutscene.render(RockBottomAPI.getGame(), RockBottomAPI.getGame().getRenderer());
+        }
     }
 
     /**
@@ -108,7 +115,7 @@ public class CutsceneManager {
     }
 
     public boolean hideGui() {
-        return isPlaying() || (isRecording() && recorder.isRecording());
+        return (isPlaying() && cutscene.hideGui()) || (isRecording() && recorder.isRecording());
     }
 
     public boolean isPlaying() {
