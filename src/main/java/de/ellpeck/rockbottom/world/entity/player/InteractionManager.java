@@ -216,13 +216,13 @@ public class InteractionManager implements IInteractionManager {
                     if (interactNormally) {
                         player.move(0);
                     } else if (recorder != null) {
-                        recorder.addVelocity(-0.2f, 0, 0);
+                        recorder.addVelocity(-recorder.getMoveSpeed(), 0, 0);
                     }
                 } else if (Settings.KEY_RIGHT.isDown()) {
                     if (interactNormally) {
                         player.move(1);
                     } else if (recorder != null) {
-                        recorder.addVelocity(0.2f, 0, 0);
+                        recorder.addVelocity(recorder.getMoveSpeed(), 0, 0);
                     }
                 }
 
@@ -230,13 +230,13 @@ public class InteractionManager implements IInteractionManager {
                     if (interactNormally) {
                         player.move(3);
                     } else if (recorder != null) {
-                        recorder.addVelocity(0, 0.2f, 0);
+                        recorder.addVelocity(0, recorder.getMoveSpeed(), 0);
                     }
                 } else if (Settings.KEY_DOWN.isDown()) {
                     if (interactNormally) {
                         player.move(4);
                     } else if (recorder != null) {
-                        recorder.addVelocity(0, -0.2f, 0);
+                        recorder.addVelocity(0, -recorder.getMoveSpeed(), 0);
                     }
                 }
 
@@ -383,7 +383,7 @@ public class InteractionManager implements IInteractionManager {
                         }
                         slotChange = true;
                     } else if (recorder != null) {
-                        recorder.addVelocity(0, 0, -1f);
+                        recorder.addVelocity(0, 0, -recorder.getZoomSpeed());
                     }
                 } else if (scroll > 0 || scrollHor > 0) {
                     if (interactNormally) {
@@ -393,7 +393,7 @@ public class InteractionManager implements IInteractionManager {
                         }
                         slotChange = true;
                     } else if (recorder != null) {
-                        recorder.addVelocity(0, 0, 1f);
+                        recorder.addVelocity(0, 0, recorder.getZoomSpeed());
                     }
                 }
 

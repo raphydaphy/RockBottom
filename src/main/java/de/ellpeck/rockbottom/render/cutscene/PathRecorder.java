@@ -2,6 +2,7 @@ package de.ellpeck.rockbottom.render.cutscene;
 
 import de.ellpeck.rockbottom.api.RockBottomAPI;
 import de.ellpeck.rockbottom.api.gui.Gui;
+import de.ellpeck.rockbottom.api.util.Util;
 
 public class PathRecorder extends CutsceneCameraObject {
     private float velocityX;
@@ -11,7 +12,7 @@ public class PathRecorder extends CutsceneCameraObject {
     private RecordedPath.Builder builder = new RecordedPath.Builder();
 
     public PathRecorder(float x, float y, float scale) {
-        super (x, y, scale);
+        super(x, y, scale);
     }
 
     @Override
@@ -38,21 +39,27 @@ public class PathRecorder extends CutsceneCameraObject {
             scale = 250;
         }
 
-        System.out.println(scale);
-
-        velocityX *= 0.8f;
-        velocityY *= 0.8f;
-        velocityScale *= 0.8f;
+        velocityX *= 0.95f;
+        velocityY *= 0.95f;
+        velocityScale *= 0.95f;
 
         if (scale != lastTickScale) {
             RockBottomAPI.getGame().getRenderer().recalculateWorldScale();
         }
     }
 
+    public float getMoveSpeed() {
+        return 0.2f;
+    }
+
+    public float getZoomSpeed() {
+        return 1f;
+    }
+
     public void addVelocity(float x, float y, float scale) {
-        velocityX += x;
-        velocityY += y;
-        velocityScale += scale;
+        velocityX = (float) Util.clamp(velocityX + x, -getMoveSpeed(), getMoveSpeed());
+        velocityY = (float) Util.clamp(velocityY + y, -getMoveSpeed(), getMoveSpeed());
+        velocityScale = (float) Util.clamp(velocityScale + scale, -getZoomSpeed(), getZoomSpeed());
     }
 
     public void startRecording() {
