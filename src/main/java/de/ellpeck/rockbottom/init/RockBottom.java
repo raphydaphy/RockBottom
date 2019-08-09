@@ -12,7 +12,7 @@ import de.ellpeck.rockbottom.api.data.set.DataSet;
 import de.ellpeck.rockbottom.api.data.settings.Settings;
 import de.ellpeck.rockbottom.api.event.IEventHandler;
 import de.ellpeck.rockbottom.api.event.impl.LoadSettingsEvent;
-import de.ellpeck.rockbottom.api.event.impl.MakeCameraCoordsEvent;
+import de.ellpeck.rockbottom.api.event.impl.CameraMovedEvent;
 import de.ellpeck.rockbottom.api.event.impl.PlayerLeaveWorldEvent;
 import de.ellpeck.rockbottom.api.event.impl.WorldLoadEvent;
 import de.ellpeck.rockbottom.api.gui.Gui;
@@ -45,8 +45,6 @@ import de.ellpeck.rockbottom.net.packet.toserver.PacketDisconnect;
 import de.ellpeck.rockbottom.net.server.ConnectedPlayer;
 import de.ellpeck.rockbottom.particle.ParticleManager;
 import de.ellpeck.rockbottom.render.WorldRenderer;
-import de.ellpeck.rockbottom.render.cutscene.Cutscene;
-import de.ellpeck.rockbottom.render.cutscene.CutsceneCamera;
 import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 import de.ellpeck.rockbottom.render.design.PlayerDesign;
 import de.ellpeck.rockbottom.util.ChangelogManager;
@@ -388,10 +386,8 @@ public class RockBottom extends AbstractGame {
             }
         }
 
-        if (!RockBottomAPI.getNet().isServer()) {
-            if (CutsceneManager.getInstance().isPlaying()) {
-                CutsceneManager.getInstance().update();
-            }
+        if (CutsceneManager.getInstance().isPlaying() || CutsceneManager.getInstance().isRecording()) {
+            CutsceneManager.getInstance().update();
         }
 
         this.guiManager.update(this);
@@ -534,16 +530,10 @@ public class RockBottom extends AbstractGame {
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
             if (this.player != null) {
-                MakeCameraCoordsEvent event;
-                if (CutsceneManager.getInstance().isPlaying()) {
-                    CutsceneCamera camera = CutsceneManager.getInstance().getActiveCutscene().getCamera();
-                    event = new MakeCameraCoordsEvent(this.player, camera.getLerpedX(), camera.getLerpedY());
-                } else {
-                    event = new MakeCameraCoordsEvent(this.player, this.player.getLerpedX(), this.player.getLerpedY() - 0.5D);
-                }
+                CameraMovedEvent event = new CameraMovedEvent(this.player, renderer.getCamera());
                 RockBottomAPI.getEventHandler().fireEvent(event);
-                this.renderer.cameraX = event.cameraX;
-                this.renderer.cameraY = event.cameraY;
+                this.renderer.cameraX = event.camera.getLerpedX();
+                this.renderer.cameraY = event.camera.getLerpedY();
             } else {
                 this.renderer.cameraX = 0D;
                 this.renderer.cameraY = 0D;

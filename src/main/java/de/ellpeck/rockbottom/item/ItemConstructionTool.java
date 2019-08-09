@@ -44,17 +44,4 @@ public class ItemConstructionTool extends ItemBasic {
     public int getHighestPossibleMeta() {
         return this.durability - 1;
     }
-
-    @Override
-    public boolean onInteractWith(IWorld world, int x, int y, TileLayer layer, double mouseX, double mouseY, AbstractEntityPlayer player, ItemInstance instance) {
-        if (this == GameContent.ITEM_HAMMER) {
-            if (!world.isServer()) {
-                // TODO: remove this
-                RockBottomAPI.logger().info("Started Debug Cutscene");
-                CutsceneManager.getInstance().startCutscene(new Cutscene(300));
-            }
-            return true;
-        }
-        return false;
-    }
 }

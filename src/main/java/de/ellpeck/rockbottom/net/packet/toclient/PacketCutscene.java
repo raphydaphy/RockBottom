@@ -1,25 +1,28 @@
 package de.ellpeck.rockbottom.net.packet.toclient;
 
 import de.ellpeck.rockbottom.api.IGameInstance;
-import de.ellpeck.rockbottom.api.data.set.DataSet;
-import de.ellpeck.rockbottom.api.entity.player.AbstractEntityPlayer;
-import de.ellpeck.rockbottom.api.item.ItemInstance;
-import de.ellpeck.rockbottom.api.net.NetUtil;
+import de.ellpeck.rockbottom.api.RockBottomAPI;
+import de.ellpeck.rockbottom.api.assets.font.FormattingCode;
+import de.ellpeck.rockbottom.api.net.chat.component.ChatComponentText;
 import de.ellpeck.rockbottom.api.net.packet.IPacket;
-import de.ellpeck.rockbottom.api.world.IWorld;
-import de.ellpeck.rockbottom.render.cutscene.Cutscene;
 import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.UUID;
-
 public class PacketCutscene implements IPacket {
-
+    private CutsceneSubcommand command;
     private int duration;
 
-    public PacketCutscene(int duration) {
+    public PacketCutscene(CutsceneSubcommand command, int duration) {
+        this.command = command;
         this.duration = duration;
+    }
+
+    public PacketCutscene(CutsceneSubcommand command) {
+        this.command = command;
+        if (command == CutsceneSubcommand.PLAY) {
+            this.duration = 100;
+        }
     }
 
     public PacketCutscene() {
@@ -27,16 +30,55 @@ public class PacketCutscene implements IPacket {
 
     @Override
     public void toBuffer(ByteBuf buf) {
-        buf.writeInt(this.duration);
+        buf.writeInt(this.command.id);
+        if (command == CutsceneSubcommand.PLAY) {
+            buf.writeInt(this.duration);
+        }
     }
 
     @Override
     public void fromBuffer(ByteBuf buf) {
-        this.duration = buf.readInt();
+        this.command = CutsceneSubcommand.fromID(buf.readInt());
+        if (command == CutsceneSubcommand.PLAY) {
+            this.duration = buf.readInt();
+        }
     }
 
     @Override
     public void handle(IGameInstance game, ChannelHandlerContext context) {
-        CutsceneManager.getInstance().startCutscene(new Cutscene(duration));
+        if (command != null) {
+            switch(command) {
+                case PLAY:
+                    CutsceneManager.getInstance().startRecordedCutscene();
+                    break;
+                case RECORD:
+                    if (CutsceneManager.getInstance().enableRecordingMode()) {
+                        game.getChatLog().displayMessage(new ChatComponentText(FormattingCode.PURPLE + "Press JUMP to start recording."));
+                    } else {
+                        game.getChatLog().displayMessage(new ChatComponentText(FormattingCode.RED + "Failed to switch to recording mode."));
+                    }
+                    break;
+
+            }
+        }
+    }
+
+    public enum CutsceneSubcommand {
+        PLAY(0), RECORD(1);
+
+        public final int id;
+        CutsceneSubcommand(int id) {
+            this.id = id;
+        }
+
+        public static CutsceneSubcommand fromID(int id) {
+            for (CutsceneSubcommand command : CutsceneSubcommand.values()) {
+                if (command.id == id) {
+                    return command;
+                }
+            }
+            RockBottomAPI.logger().warning("Tried to deserialize invalid cutscene subcommand id: " + id);
+            return null;
+        }
     }
 }

@@ -1,17 +1,18 @@
 package de.ellpeck.rockbottom.render.cutscene;
 
 import de.ellpeck.rockbottom.api.RockBottomAPI;
+import de.ellpeck.rockbottom.api.render.Camera;
 import de.ellpeck.rockbottom.api.util.Util;
 
-public class CutsceneCamera {
-    private double x;
-    private double y;
-    private float scale;
-    private double lastTickX;
-    private double lastTickY;
-    private float lastTickScale;
+public abstract class CutsceneCameraObject implements Camera {
+    protected double x;
+    protected double y;
+    protected float scale;
+    protected double lastTickX;
+    protected double lastTickY;
+    protected float lastTickScale;
 
-    public CutsceneCamera(double x, double y, float scale) {
+    public CutsceneCameraObject(double x, double y, float scale) {
         this.x = x;
         this.y = y;
         this.scale = scale;
@@ -21,31 +22,19 @@ public class CutsceneCamera {
         this.lastTickScale = scale;
     }
 
-    public void update() {
-        lastTickX = x;
-        lastTickY = y;
-        lastTickScale = scale;
+    abstract void update(int ticks);
 
-        x += 0.3;
-        y += 0.01;
-        scale -= 0.25f;
-        if (scale < 0) {
-            scale = 0;
-        }
-
-        if (scale != lastTickScale) {
-            RockBottomAPI.getGame().getRenderer().recalculateWorldScale();
-        }
-    }
-
+    @Override
     public double getLerpedX() {
         return Util.lerp(this.lastTickX, this.x, RockBottomAPI.getGame().getTickDelta());
     }
 
+    @Override
     public double getLerpedY() {
         return Util.lerp(this.lastTickY, this.y, RockBottomAPI.getGame().getTickDelta());
     }
 
+    @Override
     public float getLerpedScale() {
         return (float) Util.lerp(this.lastTickScale / 100f, this.scale / 100f, RockBottomAPI.getGame().getTickDelta());
     }

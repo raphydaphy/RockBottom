@@ -4,16 +4,17 @@ import de.ellpeck.rockbottom.api.RockBottomAPI;
 import de.ellpeck.rockbottom.api.gui.Gui;
 
 public class Cutscene {
-    private int duration;
+    private RecordedPath path;
 
     private int ticks = 0;
-    private CutsceneCamera camera = new CutsceneCamera(35,0,100);
+    private RecordedPathCamera camera;
 
-    public Cutscene(int duration) {
-        this.duration = duration;
+    public Cutscene(RecordedPath path) {
+        this.path = path;
+        this.camera = new RecordedPathCamera(path);
     }
 
-    public CutsceneCamera getCamera() {
+    public RecordedPathCamera getCamera() {
         return camera;
     }
 
@@ -24,13 +25,12 @@ public class Cutscene {
 
         Gui gui = RockBottomAPI.getGame().getGuiManager().getGui();
         if (gui == null || !gui.doesPauseGame()) {
-            camera.update();
-
             ticks++;
+            camera.update(ticks);
         }
     }
 
     public boolean finished() {
-        return ticks >= duration;
+        return ticks >= path.getLength();
     }
 }

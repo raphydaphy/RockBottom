@@ -17,7 +17,7 @@ public class Toaster implements IToaster {
     private final Map<Toast, ToastPosition> toasts = new LinkedHashMap<>();
 
     public void update() {
-        if (CutsceneManager.getInstance().isPlaying()) {
+        if (CutsceneManager.getInstance().hideGui()) {
             return;
         }
         Iterator<ToastPosition> iterator = this.toasts.values().iterator();
@@ -32,7 +32,7 @@ public class Toaster implements IToaster {
     }
 
     public void render(IGameInstance game, IAssetManager manager, IRenderer g) {
-        if (CutsceneManager.getInstance().isPlaying()) {
+        if (CutsceneManager.getInstance().hideGui()) {
             return;
         }
         for (Entry<Toast, ToastPosition> entry : this.toasts.entrySet()) {

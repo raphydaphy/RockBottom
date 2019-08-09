@@ -18,6 +18,7 @@ import de.ellpeck.rockbottom.api.event.impl.TooltipEvent;
 import de.ellpeck.rockbottom.api.gui.Gui;
 import de.ellpeck.rockbottom.api.item.Item;
 import de.ellpeck.rockbottom.api.item.ItemInstance;
+import de.ellpeck.rockbottom.api.render.Camera;
 import de.ellpeck.rockbottom.api.render.engine.IVAO;
 import de.ellpeck.rockbottom.api.render.engine.IVBO;
 import de.ellpeck.rockbottom.api.render.engine.TextureBank;
@@ -30,6 +31,7 @@ import de.ellpeck.rockbottom.assets.font.SimpleFont;
 import de.ellpeck.rockbottom.assets.shader.ShaderProgram;
 import de.ellpeck.rockbottom.assets.stub.SimpleShaderProgram;
 import de.ellpeck.rockbottom.assets.tex.Texture;
+import de.ellpeck.rockbottom.render.cutscene.CutsceneCameraObject;
 import de.ellpeck.rockbottom.render.cutscene.CutsceneManager;
 import de.ellpeck.rockbottom.render.engine.VertexArrayObject;
 import de.ellpeck.rockbottom.render.engine.VertexBufferObject;
@@ -365,6 +367,11 @@ public class Renderer implements IRenderer {
     }
 
     @Override
+    public Camera getCamera() {
+        return CutsceneManager.getInstance().getCamera();
+    }
+
+    @Override
     public void setProgram(IShaderProgram program) {
         if (program == null) {
             program = this.defaultProgram;
@@ -636,15 +643,7 @@ public class Renderer implements IRenderer {
     public void recalculateWorldScale() {
         float width = game.getWidth();
         float height = game.getHeight();
-
-        float renderScale = this.game.getSettings().renderScale;
-        if (CutsceneManager.getInstance().isPlaying()) {
-            renderScale = CutsceneManager.getInstance().getActiveCutscene().getCamera().getLerpedScale();
-        } else {
-            System.out.println("Updating render scale without cutscene! ");
-        }
-
-        this.worldScale = this.getDisplayRatio() * renderScale;
+        this.worldScale = this.getDisplayRatio() * getCamera().getLerpedScale();
         this.worldWidth = width / this.worldScale;
         this.worldHeight = height / this.worldScale;
     }

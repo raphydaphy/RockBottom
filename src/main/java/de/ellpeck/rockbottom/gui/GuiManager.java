@@ -160,7 +160,7 @@ public class GuiManager implements IGuiManager {
     }
 
     public void render(RockBottom game, IAssetManager manager, IRenderer g, EntityPlayer player) {
-        if (CutsceneManager.getInstance().isPlaying() && (gui == null || !gui.doesPauseGame())) {
+        if (CutsceneManager.getInstance().hideGui() && (gui == null || !gui.doesPauseGame())) {
             return;
         }
         int actualColor = game.getSettings().guiColor;

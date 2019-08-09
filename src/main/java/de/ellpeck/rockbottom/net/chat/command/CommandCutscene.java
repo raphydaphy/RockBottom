@@ -12,10 +12,11 @@ import de.ellpeck.rockbottom.api.net.chat.component.ChatComponentText;
 import de.ellpeck.rockbottom.api.net.packet.IPacket;
 import de.ellpeck.rockbottom.api.util.reg.ResourceName;
 import de.ellpeck.rockbottom.net.packet.toclient.PacketCutscene;
+import de.ellpeck.rockbottom.net.server.ConnectedPlayer;
 
 public class CommandCutscene extends Command {
     public CommandCutscene() {
-        super(ResourceName.intern("cutscene"), "/cutscene play <player> <duration>", 1);
+        super(ResourceName.intern("cutscene"), "/cutscene <subcommand> <arguments>", 1);
     }
 
     @Override
@@ -29,8 +30,8 @@ public class CommandCutscene extends Command {
                     AbstractEntityPlayer player = game.getWorld().getPlayer(args[1]);
                     if (player != null) {
                         int duration = Integer.parseInt(args[2]);
-                        IPacket packet = new PacketCutscene(duration);
-                        if (sender.getWorld().isServer()) {
+                        IPacket packet = new PacketCutscene(PacketCutscene.CutsceneSubcommand.PLAY, duration);
+                        if (player instanceof ConnectedPlayer) {
                             player.sendPacket(packet);
                         } else {
                             packet.handle(game, null);
@@ -42,11 +43,28 @@ public class CommandCutscene extends Command {
                 } else {
                     return new ChatComponentText(FormattingCode.RED + "Invalid Arguments! Expected /cutscene play <player> <duration>");
                 }
+            } else if (cmd.equals("record")) {
+                if (args.length == 2) {
+                    AbstractEntityPlayer player = game.getWorld().getPlayer(args[1]);
+                    if (player != null) {
+                        IPacket packet = new PacketCutscene(PacketCutscene.CutsceneSubcommand.RECORD);
+                        if (player instanceof ConnectedPlayer) {
+                            player.sendPacket(packet);
+                        } else {
+                            packet.handle(game, null);
+                        }
+                        return new ChatComponentText(FormattingCode.GREEN + "Switched " + player.getName() + " to recording mode!");
+                    } else {
+                        return new ChatComponentText(FormattingCode.RED + "Couldn't find player with name " + args[1] + '!');
+                    }
+                } else {
+                    return new ChatComponentText(FormattingCode.RED + "Invalid Arguments! Expected /cutscene record <player>");
+                }
             } else {
                 return new ChatComponentText(FormattingCode.RED + "Invalid Subcommand!");
             }
         } else {
-            return new ChatComponentText(FormattingCode.RED + "You must enter a subcommand! Valid options are 'play'.!");
+            return new ChatComponentText(FormattingCode.RED + "You must enter a subcommand! Valid options are 'play' and 'record'.!");
         }
     }
 
